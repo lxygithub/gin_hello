@@ -13,7 +13,7 @@ type User struct {
 // Connect 连接数据库并返回所有用户和错误
 func Connect() ([]User, error) {
 	// 设置数据库DSN（数据源名称）
-	dsn := "user:password@tcp(117.50.199.110:6603)/databaseName" // 注意修改这里的user, password和databaseName
+	dsn := "mysql:password@tcp(117.50.199.110:6603)/mysql"
 
 	// 打开数据库连接
 	db, err := sql.Open("mysql", dsn)
