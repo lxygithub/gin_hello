@@ -8,7 +8,7 @@ import (
 
 func GinServer() *gin.Engine {
 	ginServer := gin.Default()
-	ginServer.GET("/ping", func(c *gin.Context) {
+	ginServer.GET("/", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "测试webhook!!!!!!!!!",
 		})
