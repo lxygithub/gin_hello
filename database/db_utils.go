@@ -1,29 +1,55 @@
-package db
+package database
 
 import (
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
+	"log"
+	"sync"
+	"time"
 )
+
+// 定义DB单例和sync.Once实例
+var (
+	instance *sql.DB
+	once     sync.Once
+)
+
+// 初始化数据库连接的函数
+func InitDB(dataSourceName string) {
+	var err error
+	once.Do(func() {
+		instance, err = sql.Open("mysql", dataSourceName)
+		if err != nil {
+			log.Fatalf("Error opening database: %v", err)
+		}
+
+		// 设置连接池参数
+		instance.SetMaxOpenConns(25)
+		instance.SetMaxIdleConns(5)
+		instance.SetConnMaxLifetime(time.Minute * 5)
+	})
+}
+
+// 获取数据库连接实例的函数
+func GetDB() *sql.DB {
+	if instance == nil {
+		log.Fatalf("DB instance is not initialized yet")
+	}
+	return instance
+}
 
 // User 结构体定义用户数据的类型
 type User struct {
 	Username string
 }
 
-// Connect 连接数据库并返回所有用户和错误
-func Connect() ([]User, error) {
+func GetUsers() ([]User, error) {
 	// 设置数据库DSN（数据源名称）
-	dsn := "mysql:password@tcp(117.50.199.110:6603)/mysql"
-
-	// 打开数据库连接
-	db, err := sql.Open("mysql", dsn)
-	if err != nil {
-		return nil, err
-	}
+	db := GetDB()
 	defer db.Close()
 
 	// 检查数据库连接是否成功
-	err = db.Ping()
+	err := db.Ping()
 	if err != nil {
 		return nil, err
 	}

@@ -1,6 +1,20 @@
 package main
 
+import (
+	"fmt"
+	"gin_hello/config"
+	"gin_hello/database"
+)
+
 func main() {
 
-	_ = GinServer().Run(":8081") // listen and serve on 0.0.0.0:8081
+	database.InitDB(fmt.Sprintf("%s:%s@tcp(%s:%d)/%s",
+		config.ReadConf("database.username"),
+		config.ReadConf("database.password"),
+		config.ReadConf("database.host"),
+		config.ReadConf("database.port"),
+		config.ReadConf("database.dbname"),
+	))
+	_ = GinServer().Run(fmt.Sprintf(":%d", config.ReadConf("server.port")))
+
 }

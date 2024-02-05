@@ -1,7 +1,7 @@
 package main
 
 import (
-	"gin_hello/db"
+	"gin_hello/database"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -22,9 +22,10 @@ func GinServer() *gin.Engine {
 			"password": password,
 		})
 	})
+
 	ginServer.GET("/users", func(c *gin.Context) {
 
-		users, err := db.Connect()
+		users, err := database.GetUsers()
 		c.JSON(http.StatusOK, gin.H{
 			"data":  users,
 			"error": err,
