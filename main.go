@@ -9,12 +9,12 @@ import (
 func main() {
 
 	database.InitDB(fmt.Sprintf("%s:%s@tcp(%s:%d)/%s",
-		config.ReadConf("database.username"),
-		config.ReadConf("database.password"),
-		config.ReadConf("database.host"),
-		config.ReadConf("database.port"),
-		config.ReadConf("database.dbname"),
+		config.ReadConf("database.username").(string),
+		config.ReadConf("database.password").(string),
+		config.ReadConf("database.host").(string),
+		config.ReadConf("database.port").(int),
+		config.ReadConf("database.dbname").(string),
 	))
-	_ = GinServer().Run(fmt.Sprintf(":%d", config.ReadConf("server.port")))
+	_ = GinServer().Run(fmt.Sprintf(":%d", config.ReadConf("server.port").(int)))
 
 }
