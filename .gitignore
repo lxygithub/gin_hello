@@ -19,6 +19,3 @@
 
 # Go workspace file
 go.work
-config.yaml
-gin_hello.error.log
-gin_hello.log
