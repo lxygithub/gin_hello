@@ -31,5 +31,8 @@ func GinServer() *gin.Engine {
 			"error": err,
 		})
 	})
+	ginServer.NoRoute(func(c *gin.Context) {
+		c.Redirect(http.StatusMovedPermanently, "/")
+	})
 	return ginServer
 }
