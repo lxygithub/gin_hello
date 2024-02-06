@@ -28,7 +28,6 @@ func GinServer() *gin.Engine {
 	})
 
 	ginServer.GET("/users", func(c *gin.Context) {
-
 		users, _ := database.GetUsers()
 		c.JSON(http.StatusOK, models.NewSuccessResponse(
 			map[string]interface{}{
