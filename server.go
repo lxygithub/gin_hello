@@ -35,6 +35,9 @@ func GinServer() *gin.Engine {
 	ginServer.POST("/send_wechat_msg2", func(c *gin.Context) {
 		send_wechat_msg2(c)
 	})
+	ginServer.POST("/received_wechat_msg", func(c *gin.Context) {
+		received_wechat_msg(c)
+	})
 
 	ginServer.GET("/users", func(c *gin.Context) {
 		users, _ := database.GetUsers()
@@ -149,6 +152,40 @@ func send_wechat_msg2(c *gin.Context) {
 	}
 
 	c.JSON(resp.StatusCode, models.NewSuccessResponse(string(bodyBytes)))
+}
+
+func received_wechat_msg(c *gin.Context) {
+
+	/**
+		{
+	    # 消息类型
+	    "type": "text",
+	    # 消息内容
+	    "content": "你好",
+	    # 消息发送方的数据
+	    "source": "{}",
+	    # 是否被艾特
+	    "isMentioned": "0",
+	    # 是否自己发送给自己的消息
+	    "isMsgFromSelf": "0",
+	    # 被遗弃的参数
+	    "isSystemEvent": "0"
+	  }
+	*/
+
+	// 准备JSON数据
+	jsonData := map[string]interface{}{
+		"type":          c.PostForm("type"),
+		"content":       c.PostForm("content"),
+		"isMentioned":   c.PostForm("isMentioned"),
+		"isMsgFromSelf": c.PostForm("isMsgFromSelf"),
+		"isSystemEvent": c.PostForm("isSystemEvent"),
+		"source":        c.PostForm("source"),
+	}
+
+	c.JSON(http.StatusOK, models.NewSuccessResponse(map[string]interface{}{
+		"data": jsonData,
+	}))
 }
 
 func login(c *gin.Context) {
