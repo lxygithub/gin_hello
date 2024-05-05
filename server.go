@@ -32,7 +32,7 @@ func GinServer() *gin.Engine {
 
 		send_wechat_msg(c)
 	})
-	ginServer.POST("/send_wechat_msg/", func(c *gin.Context) {
+	ginServer.POST("/send_wechat_msg2", func(c *gin.Context) {
 		send_wechat_msg2(c)
 	})
 
