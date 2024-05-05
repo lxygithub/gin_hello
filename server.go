@@ -55,11 +55,6 @@ func GinServer() *gin.Engine {
 }
 
 func send_wechat_msg(c *gin.Context) {
-	data := map[string]interface{}{
-		"to":        c.Param("to"),
-		"send_type": c.Param("send_type"),
-		"msg":       c.Param("msg"),
-	}
 	// 定义POST请求的URL
 	url := "http://117.50.199.110:3001/webhook/msg/v2?token=lroRidFIwN6BXvPt5UWtPp0rROQZ3VmHRllNpQstflmaOE9G"
 
@@ -72,7 +67,7 @@ func send_wechat_msg(c *gin.Context) {
 		},
 	}
 	if c.Param("send_type") == "g" {
-		data["isRoom"] = true
+		jsonData["isRoom"] = true
 	}
 	jsonValue, err := json.Marshal(jsonData)
 	if err != nil {
@@ -108,24 +103,19 @@ func send_wechat_msg(c *gin.Context) {
 	c.JSON(resp.StatusCode, models.NewSuccessResponse(string(bodyBytes)))
 }
 func send_wechat_msg2(c *gin.Context) {
-	data := map[string]interface{}{
-		"to":        c.PostForm("to"),
-		"send_type": c.PostForm("send_type"),
-		"msg":       c.PostForm("msg"),
-	}
 	// 定义POST请求的URL
 	url := "http://117.50.199.110:3001/webhook/msg/v2?token=lroRidFIwN6BXvPt5UWtPp0rROQZ3VmHRllNpQstflmaOE9G"
 
 	// 准备JSON数据
 	jsonData := map[string]interface{}{
-		"to": c.Param("to"),
+		"to": c.PostForm("to"),
 		"data": map[string]interface{}{
 			"type":    "text",
-			"content": c.Param("msg"),
+			"content": c.PostForm("msg"),
 		},
 	}
-	if c.Param("send_type") == "g" {
-		data["isRoom"] = true
+	if c.PostForm("send_type") == "g" {
+		jsonData["isRoom"] = true
 	}
 	jsonValue, err := json.Marshal(jsonData)
 	if err != nil {
