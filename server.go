@@ -6,9 +6,8 @@ import (
 	"gin_hello/database"
 	"gin_hello/middle_ware"
 	"gin_hello/models"
-	"net/http"
-
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 func GinServer() *gin.Engine {
@@ -32,6 +31,9 @@ func GinServer() *gin.Engine {
 	ginServer.POST("/send_wechat_msg/:to/:send_type/:msg", func(c *gin.Context) {
 
 		send_wechat_msg(c)
+	})
+	ginServer.POST("/send_wechat_msg/", func(c *gin.Context) {
+		send_wechat_msg2(c)
 	})
 
 	ginServer.GET("/users", func(c *gin.Context) {
@@ -66,7 +68,60 @@ func send_wechat_msg(c *gin.Context) {
 		"to": c.Param("to"),
 		"data": map[string]interface{}{
 			"type":    "text",
-			"content": c.Param("msg"), 
+			"content": c.Param("msg"),
+		},
+	}
+	if c.Param("send_type") == "g" {
+		data["isRoom"] = true
+	}
+	jsonValue, err := json.Marshal(jsonData)
+	if err != nil {
+		panic(err)
+	}
+
+	// 创建请求
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonValue))
+	if err != nil {
+		panic(err)
+	}
+
+	// 设置请求头，这里是设置内容类型为JSON
+	req.Header.Set("Content-Type", "application/json; charset=utf-8")
+
+	// 初始化HTTP客户端
+	client := &http.Client{}
+
+	// 发送请求
+	resp, err := client.Do(req)
+	if err != nil {
+		panic(err)
+	}
+	defer resp.Body.Close()
+
+	// 处理响应，例如打印状态码或读取响应体
+	var bodyBytes []byte
+	_, err = resp.Body.Read(bodyBytes)
+	if err != nil {
+		panic(err)
+	}
+
+	c.JSON(resp.StatusCode, models.NewSuccessResponse(string(bodyBytes)))
+}
+func send_wechat_msg2(c *gin.Context) {
+	data := map[string]interface{}{
+		"to":        c.PostForm("to"),
+		"send_type": c.PostForm("send_type"),
+		"msg":       c.PostForm("msg"),
+	}
+	// 定义POST请求的URL
+	url := "http://117.50.199.110:3001/webhook/msg/v2?token=lroRidFIwN6BXvPt5UWtPp0rROQZ3VmHRllNpQstflmaOE9G"
+
+	// 准备JSON数据
+	jsonData := map[string]interface{}{
+		"to": c.Param("to"),
+		"data": map[string]interface{}{
+			"type":    "text",
+			"content": c.Param("msg"),
 		},
 	}
 	if c.Param("send_type") == "g" {
