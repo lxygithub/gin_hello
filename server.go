@@ -188,13 +188,13 @@ func received_wechat_msg(c *gin.Context) {
 	}
 
 	if strings.Contains(receivedContent, "@") || isMentioned == "1" {
-		_, content := json.Marshal(receivedJsonData)
+		// _, content := json.Marshal(receivedJsonData)
 		// 准备JSON数据
 		jsonData := map[string]interface{}{
 			"to": "相见不如怀念",
 			"data": map[string]interface{}{
 				"type":    "text",
-				"content": content,
+				"content": "这是回复",
 			},
 		}
 		jsonValue, err := json.Marshal(jsonData)
