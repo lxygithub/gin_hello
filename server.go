@@ -6,8 +6,10 @@ import (
 	"gin_hello/database"
 	"gin_hello/middle_ware"
 	"gin_hello/models"
-	"github.com/gin-gonic/gin"
 	"net/http"
+	"strings"
+
+	"github.com/gin-gonic/gin"
 )
 
 var send_wechat_msg_api_url = "http://117.50.199.110:3001/webhook/msg/v2?token=lroRidFIwN6BXvPt5UWtPp0rROQZ3VmHRllNpQstflmaOE9G"
@@ -174,17 +176,18 @@ func received_wechat_msg(c *gin.Context) {
 	*/
 
 	isMentioned := c.PostForm("isMentioned")
+	receivedContent := c.PostForm("content")
 	// 准备JSON数据
 	receivedJsonData := map[string]interface{}{
 		"type":          c.PostForm("type"),
-		"content":       c.PostForm("content"),
+		"content":       receivedContent,
 		"isMentioned":   isMentioned,
 		"isMsgFromSelf": c.PostForm("isMsgFromSelf"),
 		"isSystemEvent": c.PostForm("isSystemEvent"),
 		"source":        c.PostForm("source"),
 	}
 
-	if isMentioned == "1" {
+	if strings.Contains(receivedContent, "@") || isMentioned == "1" {
 		_, content := json.Marshal(receivedJsonData)
 		// 准备JSON数据
 		jsonData := map[string]interface{}{
