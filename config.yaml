@@ -1,0 +1,21 @@
+server:
+  host: 117.50.199.110
+  port: 8081
+  jwt_secret_key: 7hH3kZF4PQ8rR6yS2Tn9uVwXeX5zAbCd
+
+database:
+  host: 117.50.199.110
+  port: 6603
+  username: mysql
+  password: password
+  dbname: mysql
+
+logging:
+  level: info
+  file: /var/log/myapp.log
+
+features:
+  - fast
+  - reliable
+  - simple
+
