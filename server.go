@@ -10,7 +10,7 @@ import (
 	"net/http"
 )
 
-var send_wechat_msg_api_url = "http://117.50.199.110:3001/webhook/msg/v2?token=lroRidFIwN6BXvPt5UWtPp0rROQZ3VmHRllNpQstflmaOE9G";
+var send_wechat_msg_api_url = "http://117.50.199.110:3001/webhook/msg/v2?token=lroRidFIwN6BXvPt5UWtPp0rROQZ3VmHRllNpQstflmaOE9G"
 
 func GinServer() *gin.Engine {
 	ginServer := gin.Default()
@@ -173,56 +173,62 @@ func received_wechat_msg(c *gin.Context) {
 	  }
 	*/
 
+	isMentioned := c.PostForm("isMentioned")
 	// 准备JSON数据
 	receivedJsonData := map[string]interface{}{
 		"type":          c.PostForm("type"),
 		"content":       c.PostForm("content"),
-		"isMentioned":   c.PostForm("isMentioned"),
+		"isMentioned":   isMentioned,
 		"isMsgFromSelf": c.PostForm("isMsgFromSelf"),
 		"isSystemEvent": c.PostForm("isSystemEvent"),
 		"source":        c.PostForm("source"),
 	}
-	_,content:=json.Marshal(receivedJsonData)
-	// 准备JSON数据
-	jsonData := map[string]interface{}{
-		"to": "相见不如怀念",
-		"data": map[string]interface{}{
-			"type":    "text",
-			"content": content,
-		},
+
+	if isMentioned == "1" {
+		_, content := json.Marshal(receivedJsonData)
+		// 准备JSON数据
+		jsonData := map[string]interface{}{
+			"to": "相见不如怀念",
+			"data": map[string]interface{}{
+				"type":    "text",
+				"content": content,
+			},
+		}
+		jsonValue, err := json.Marshal(jsonData)
+		if err != nil {
+			panic(err)
+		}
+
+		// 创建请求
+		req, err := http.NewRequest("POST", send_wechat_msg_api_url, bytes.NewBuffer(jsonValue))
+		if err != nil {
+			panic(err)
+		}
+
+		// 设置请求头，这里是设置内容类型为JSON
+		req.Header.Set("Content-Type", "application/json; charset=utf-8")
+
+		// 初始化HTTP客户端
+		client := &http.Client{}
+
+		// 发送请求
+		resp, err := client.Do(req)
+		if err != nil {
+			panic(err)
+		}
+		defer resp.Body.Close()
+
+		// 处理响应，例如打印状态码或读取响应体
+		var bodyBytes []byte
+		_, err = resp.Body.Read(bodyBytes)
+		if err != nil {
+			panic(err)
+		}
+
+		c.JSON(resp.StatusCode, models.NewSuccessResponse(string(bodyBytes)))
+	} else {
+		c.JSON(http.StatusOK, models.NewSuccessResponse(receivedJsonData))
 	}
-	jsonValue, err := json.Marshal(jsonData)
-	if err != nil {
-		panic(err)
-	}
-
-	// 创建请求
-	req, err := http.NewRequest("POST", send_wechat_msg_api_url, bytes.NewBuffer(jsonValue))
-	if err != nil {
-		panic(err)
-	}
-
-	// 设置请求头，这里是设置内容类型为JSON
-	req.Header.Set("Content-Type", "application/json; charset=utf-8")
-
-	// 初始化HTTP客户端
-	client := &http.Client{}
-
-	// 发送请求
-	resp, err := client.Do(req)
-	if err != nil {
-		panic(err)
-	}
-	defer resp.Body.Close()
-
-	// 处理响应，例如打印状态码或读取响应体
-	var bodyBytes []byte
-	_, err = resp.Body.Read(bodyBytes)
-	if err != nil {
-		panic(err)
-	}
-
-	c.JSON(resp.StatusCode, models.NewSuccessResponse(string(bodyBytes)))
 }
 
 func login(c *gin.Context) {
