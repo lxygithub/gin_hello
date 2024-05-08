@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"gin_hello/config"
 	"gin_hello/models"
+	"io"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -55,13 +56,12 @@ func SingleChat(quizz string) (string){
 	defer resp.Body.Close()
 
 	// 处理响应，例如打印状态码或读取响应体
-	var bodyBytes []byte
-	_, err = resp.Body.Read(bodyBytes)
+	bodyBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
 		panic(err)
 	}
 	var kimiResp models.KimiResponse
-	json.Unmarshal([]byte(string(bodyBytes)), &kimiResp)
+	json.Unmarshal(bodyBytes, &kimiResp)
 
 	return kimiResp.Choices[0].Message.Content
 }
