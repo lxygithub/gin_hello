@@ -13,7 +13,6 @@ import (
 
 var apiUrl = "https://api.moonshot.cn/v1/chat/completions"
 
-var apiKey = config.ReadConf("kimi.api_key").(string)
 
 func SingleChat(quizz string, resultChan chan string) {
 	jsonBody := map[string]interface{}{
@@ -43,7 +42,7 @@ func SingleChat(quizz string, resultChan chan string) {
 
 	// 设置请求头，这里是设置内容类型为JSON
 	req.Header.Set("Content-Type", "application/json; charset=utf-8")
-	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", apiKey))
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", config.ReadConf("kimi.api_key").(string)))
 
 	// 初始化HTTP客户端
 	client := &http.Client{}
