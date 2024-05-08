@@ -14,7 +14,7 @@ import (
 var apiUrl = "https://api.moonshot.cn/v1/chat/completions"
 
 
-func SingleChat(quizz string, resultChan chan string) {
+func SingleChat(quizz string) (string){
 	jsonBody := map[string]interface{}{
 		"model": "moonshot-v1-32k",
 		"messages": []map[string]interface{}{
@@ -63,15 +63,13 @@ func SingleChat(quizz string, resultChan chan string) {
 	var kimiResp models.KimiResponse
 	json.Unmarshal([]byte(string(bodyBytes)), &kimiResp)
 
-	resultChan <- kimiResp.Choices[0].Message.Content
+	return kimiResp.Choices[0].Message.Content
 }
 
 func Chat(c *gin.Context) {
 	quizz := c.PostForm("quizz")
-	resultChan := make(chan string)
 
-	go SingleChat(quizz, resultChan)
 
-	result := <-resultChan
+	result := SingleChat(quizz)
 	c.JSON(http.StatusOK, models.NewSuccessResponse(result))
 }

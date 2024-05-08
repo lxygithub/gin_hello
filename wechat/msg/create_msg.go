@@ -40,9 +40,7 @@ func CreateReplyMsg(c *gin.Context) string {
 
 	if isMentioned == "1" {
 		if content != "" {
-			resultChan := make(chan string)
-			go kimi.SingleChat(strings.ReplaceAll(fmt.Sprintf("@%s",msgSource.From.Payload.Name),content,""), resultChan)
-			result := <-resultChan
+			result := kimi.SingleChat(strings.ReplaceAll(fmt.Sprintf("@%s",msgSource.From.Payload.Name),content,""))
 			replyContent = fmt.Sprintf("@%s %s", msgSource.From.Payload.Name, result)
 		} else {
 			replyContent = fmt.Sprintf("@%s 叫我干啥？", msgSource.From.Payload.Name)
