@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"gin_hello/config"
+	"gin_hello/models"
 	"net/http"
 )
 
@@ -58,6 +59,8 @@ func SingleChat(quizz string, resultChan chan string) {
 	if err != nil {
 		panic(err)
 	}
+	var kimiResp models.KimiResponse
+	json.Unmarshal([]byte(string(bodyBytes)), &kimiResp)
 
-	resultChan <-  string(bodyBytes)
+	resultChan <-  kimiResp.Choices[0].Message.Content
 }

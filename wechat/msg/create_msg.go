@@ -3,8 +3,8 @@ package msg
 import (
 	"encoding/json"
 	"fmt"
+	"gin_hello/kimi"
 	"gin_hello/models"
-	"gin_hello/wechat/kimi"
 
 	"github.com/gin-gonic/gin"
 )
