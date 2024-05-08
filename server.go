@@ -7,7 +7,6 @@ import (
 	"gin_hello/middle_ware"
 	"gin_hello/models"
 	"net/http"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 )
