@@ -3,6 +3,9 @@ server:
   port: 8081
   jwt_secret_key: 7hH3kZF4PQ8rR6yS2Tn9uVwXeX5zAbCd
 
+
+kimi:
+  api_key: sk-lroRidFIwN6BXvPt5UWtPp0rROQZ3VmHRllNpQstflmaOE9G
 database:
   host: 117.50.199.110
   port: 6603

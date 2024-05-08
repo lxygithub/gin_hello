@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"gin_hello/models"
+	"gin_hello/wechat/kimi"
 
 	"github.com/gin-gonic/gin"
 )
@@ -27,6 +28,7 @@ func CreateReplyMsg(c *gin.Context) string {
 	  }
 	*/
 
+	content := c.PostForm("content")
 	source := c.PostForm("source")
 	isMentioned := c.PostForm("isMentioned")
 	var msgSource models.MsgSource
@@ -36,7 +38,14 @@ func CreateReplyMsg(c *gin.Context) string {
 	var replyContent string
 
 	if isMentioned == "1" {
-		replyContent = fmt.Sprintf("@%s 叫我干啥？", msgSource.From.Payload.Name)
+		if content != "" {
+			resultChan := make(chan string)
+			go kimi.SingleChat(content, resultChan)
+			result := <-resultChan
+			replyContent = fmt.Sprintf("@%s %s", msgSource.From.Payload.Name, result)
+		} else {
+			replyContent = fmt.Sprintf("@%s 叫我干啥？", msgSource.From.Payload.Name)
+		}
 	}
 	return replyContent
 }

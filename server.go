@@ -6,7 +6,6 @@ import (
 	"gin_hello/models"
 	"gin_hello/wechat"
 	"net/http"
-
 	"github.com/gin-gonic/gin"
 )
 
@@ -29,7 +28,6 @@ func GinServer() *gin.Engine {
 		c.JSON(http.StatusOK, models.NewSuccessResponse(data))
 	})
 	ginServer.POST("/send_wechat_msg/:to/:send_type/:msg", func(c *gin.Context) {
-
 		wechat.Send_wechat_msg(c)
 	})
 	ginServer.POST("/send_wechat_msg2", func(c *gin.Context) {
