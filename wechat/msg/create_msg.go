@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"gin_hello/kimi"
 	"gin_hello/models"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -40,7 +41,7 @@ func CreateReplyMsg(c *gin.Context) string {
 	if isMentioned == "1" {
 		if content != "" {
 			resultChan := make(chan string)
-			go kimi.SingleChat(content, resultChan)
+			go kimi.SingleChat(strings.ReplaceAll(fmt.Sprintf("@%s",msgSource.From.Payload.Name),content,""), resultChan)
 			result := <-resultChan
 			replyContent = fmt.Sprintf("@%s %s", msgSource.From.Payload.Name, result)
 		} else {
