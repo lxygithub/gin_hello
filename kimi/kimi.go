@@ -7,6 +7,8 @@ import (
 	"gin_hello/config"
 	"gin_hello/models"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 var apiUrl = "https://api.moonshot.cn/v1/chat/completions"
@@ -62,5 +64,15 @@ func SingleChat(quizz string, resultChan chan string) {
 	var kimiResp models.KimiResponse
 	json.Unmarshal([]byte(string(bodyBytes)), &kimiResp)
 
-	resultChan <-  kimiResp.Choices[0].Message.Content
+	resultChan <- kimiResp.Choices[0].Message.Content
+}
+
+func Chat(c *gin.Context) {
+	quizz := c.PostForm("quizz")
+	resultChan := make(chan string)
+
+	go SingleChat(quizz, resultChan)
+
+	result := <-resultChan
+	c.JSON(http.StatusOK, models.NewSuccessResponse(result))
 }

@@ -2,10 +2,12 @@ package main
 
 import (
 	"gin_hello/database"
+	"gin_hello/kimi"
 	"gin_hello/middle_ware"
 	"gin_hello/models"
 	"gin_hello/wechat"
 	"net/http"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -35,6 +37,9 @@ func GinServer() *gin.Engine {
 	})
 	ginServer.POST("/received_wechat_msg", func(c *gin.Context) {
 		wechat.Received_wechat_msg(c)
+	})
+	ginServer.POST("/kimi/single_chat", func(c *gin.Context) {
+		kimi.Chat(c)
 	})
 
 	ginServer.GET("/users", func(c *gin.Context) {
