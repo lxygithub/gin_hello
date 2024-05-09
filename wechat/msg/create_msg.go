@@ -3,6 +3,7 @@ package msg
 import (
 	"encoding/json"
 	"fmt"
+	"gin_hello/kimi"
 	"gin_hello/models"
 
 	"github.com/gin-gonic/gin"
@@ -37,8 +38,8 @@ func CreateReplyMsg(c *gin.Context) string {
 	var replyContent string
 	// quizz:=strings.ReplaceAll(fmt.Sprintf("@%s",msgSource.From.Payload.Name),content,"")
 	if content != "" {
-		// result := kimi.SingleChat(quizz)
-		replyContent = fmt.Sprintf("@%s %s", msgSource.From.Payload.Name, content)
+		result := kimi.SingleChat(content)
+		replyContent = fmt.Sprintf("@%s %s", msgSource.From.Payload.Name, &result)
 	} else {
 		replyContent = fmt.Sprintf("@%s 叫我干啥？", msgSource.From.Payload.Name)
 	}
