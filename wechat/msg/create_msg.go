@@ -38,7 +38,7 @@ func CreateReplyMsg(c *gin.Context) string {
 
 	var replyContent string
 
-	quizz := strings.ReplaceAll(content, msgSource.To.Payload.Name, "")
+	quizz := strings.ReplaceAll(content, ("@"+msgSource.To.Payload.Name), "")
 	if isMentioned == "1" {
 		if quizz != "" {
 			result := kimi.SingleChat(quizz)
