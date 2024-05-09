@@ -47,5 +47,5 @@ func CreateReplyMsg(c *gin.Context) string {
 			replyContent = fmt.Sprintf("@%s 叫我干啥？", msgSource.From.Payload.Name)
 		}
 	}
-	return replyContent+"-----------"+quizz
+	return replyContent+"-----------"+quizz+"--------"+content
 }
