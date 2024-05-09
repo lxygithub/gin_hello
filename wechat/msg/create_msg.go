@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"gin_hello/kimi"
 	"gin_hello/models"
-	"strings"
+	"regexp"
 
 	"github.com/gin-gonic/gin"
 )
@@ -38,7 +38,7 @@ func CreateReplyMsg(c *gin.Context) string {
 
 	var replyContent string
 
-	quizz := strings.ReplaceAll(content, ("@"+msgSource.To.Payload.Name), "")
+	quizz := RemoveAt(content)
 	if isMentioned == "1" {
 		if quizz != "" {
 			result := kimi.SingleChat(quizz)
@@ -47,6 +47,16 @@ func CreateReplyMsg(c *gin.Context) string {
 			replyContent = fmt.Sprintf("@%s 叫我干啥？", msgSource.From.Payload.Name)
 		}
 	}
-	jsonData,_:=json.Marshal(msgSource)
-	return replyContent+"-----------"+string(jsonData)
+	return replyContent
+}
+
+func RemoveAt(content string) string{
+
+    // 编译正则表达式，匹配 "@" 及其后面的所有字符
+    re := regexp.MustCompile(`@[\p{L}\p{N}\p{P}\p{Z}]+`)
+
+    // 使用正则表达式替换匹配的部分
+    cleanedContent := re.ReplaceAllString(content, "")
+
+    return cleanedContent
 }
