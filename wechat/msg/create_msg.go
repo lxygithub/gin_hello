@@ -3,7 +3,7 @@ package msg
 import (
 	"encoding/json"
 	"fmt"
-	"gin_hello/kimi"
+	// "gin_hello/kimi"
 	"gin_hello/models"
 	"strings"
 
@@ -31,21 +31,21 @@ func CreateReplyMsg(c *gin.Context) string {
 
 	content := c.PostForm("content")
 	source := c.PostForm("source")
-	isMentioned := c.PostForm("isMentioned")
+	// isMentioned := c.PostForm("isMentioned")
 	var msgSource models.MsgSource
 
 	json.Unmarshal([]byte(source), &msgSource)
 
-	var replyContent string
+	// var replyContent string
 
 	quizz := strings.ReplaceAll(content, fmt.Sprintf("@%s", msgSource.To.Payload.Name), "")
-	if isMentioned == "1" {
-		if quizz != "" {
-			result := kimi.SingleChat(quizz)
-			replyContent = fmt.Sprintf("@%s %s", msgSource.From.Payload.Name, result)
-		} else {
-			replyContent = fmt.Sprintf("@%s 叫我干啥？", msgSource.From.Payload.Name)
-		}
-	}
-	return replyContent
+	// if isMentioned == "1" {
+	// 	if quizz != "" {
+	// 		result := kimi.SingleChat(quizz)
+	// 		replyContent = fmt.Sprintf("@%s %s", msgSource.From.Payload.Name, result)
+	// 	} else {
+	// 		replyContent = fmt.Sprintf("@%s 叫我干啥？", msgSource.From.Payload.Name)
+	// 	}
+	// }
+	return content+"---------"+quizz
 }
