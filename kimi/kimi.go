@@ -18,7 +18,7 @@ var apiUrl = "https://api.moonshot.cn/v1/chat/completions"
 
 func SingleChat(quizz string) string {
 	jsonBody := map[string]interface{}{
-		"model": "moonshot-v1-32k",
+		"model": "moonshot-v1-8k",
 		"messages": []map[string]interface{}{
 			{
 				"role":    "system",
