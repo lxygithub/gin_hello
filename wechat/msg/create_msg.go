@@ -39,9 +39,11 @@ func CreateReplyMsg(c *gin.Context) string {
 	var replyContent string
 
 	quizz := RemoveAt(content)
-	if isMentioned == "1" || msgSource.To.Payload.Name != "" {
+	if msgSource.To.Payload.Name != "" && quizz != "" {
+		replyContent = openai.SingleChat(quizz,nil)
+	} else if isMentioned == "1" {
 		if quizz != "" {
-			result := openai.SingleChat(quizz)
+			result := openai.SingleChat(quizz,nil)
 			replyContent = fmt.Sprintf("@%s\n %s", msgSource.From.Payload.Name, result)
 		} else {
 			replyContent = fmt.Sprintf("@%s 叫我干啥？", msgSource.From.Payload.Name)

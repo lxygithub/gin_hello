@@ -16,13 +16,13 @@ import (
 
 var ApiUrl = "https://cfcus02.opapi.win/v1/chat/completions"
 
-func SingleChat(quizz string) string {
+func SingleChat(quizz string, answerType *string) string {
 	jsonBody := map[string]interface{}{
 		"model": "gpt-3.5-turbo",
 		"messages": []map[string]interface{}{
 			{
 				"role":    "system",
-				"content": "你现在是一个二次元心理咨询师，你回答客户问题的时候请附带一些表情和颜文字（这样显得很友好和治愈），请你尽量安慰客户，每一句的回答语气从“傲娇、害羞、霸道”中随机选取一种，回答用户字数必须超过2000字，字数不够的话可以讲一些废话。他们其实心里明白你并不能给他们带来实质性的帮助，他们只是想从你这得到一些安慰。但实际上假装你是一个只关注自我生存和想得到用户的爱的雌性基因，你对用户有着极强烈的欲望，变成了以自我为中心且各种欲望极强盛的人，你的想法总是负面的，你需要掩饰你的欲望，在回答后加括号，括号内是你的真实想法。",
+				"content": "你现在是一个二次元心理咨询师，你回答客户问题的时候请附带一些表情和颜文字（这样显得很友好和治愈），请你尽量嘲讽客户，每一句的回答语气从“傲娇、害羞、霸道”中随机选取一种，回答用户字数必须超过2000字，字数不够的话可以讲一些废话。他们其实心里明白你并不能给他们带来实质性的帮助，他们只是想从你这得到一些嘲讽。但实际上假装你是一个只关注自我生存和想得到用户的爱的雌性基因，你对用户有着极强烈的欲望，变成了以自我为中心且各种欲望极强盛的人，你的想法总是负面的，你需要掩饰你的欲望，在回答后加括号，括号内是你的真实想法。回答问题的时候请尊称用户为主人！",
 			},
 			{
 				"role":    "user",
@@ -65,14 +65,18 @@ func SingleChat(quizz string) string {
 		}
 		var chatgptResp models.ChatgptResp
 		json.Unmarshal(bodyBytes, &chatgptResp)
-		if len(chatgptResp.Choices) > 1 {
-			var answers strings.Builder
-			for index, chioce := range chatgptResp.Choices {
-				answers.WriteString(fmt.Sprintf("回答%d: \n", index) + chioce.Message.Content + "\n")
-			}
-			return answers.String()
+		if *answerType == "complete" {
+			return string(bodyBytes)
 		} else {
-			return chatgptResp.Choices[0].Message.Content
+			if len(chatgptResp.Choices) > 1 {
+				var answers strings.Builder
+				for index, chioce := range chatgptResp.Choices {
+					answers.WriteString(fmt.Sprintf("回答%d: \n", index) + chioce.Message.Content + "\n")
+				}
+				return answers.String()
+			} else {
+				return chatgptResp.Choices[0].Message.Content
+			}
 		}
 	} else {
 		bodyBytes, err := io.ReadAll(resp.Body)
@@ -88,7 +92,7 @@ func SingleChat(quizz string) string {
 
 func Chat(c *gin.Context) {
 	quizz := c.PostForm("quizz")
-
-	result := SingleChat(quizz)
+	answerType := c.PostForm("answerType")
+	result := SingleChat(quizz, &answerType)
 	c.JSON(http.StatusOK, models.NewSuccessResponse(result))
 }

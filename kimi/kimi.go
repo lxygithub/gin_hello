@@ -16,7 +16,7 @@ import (
 
 var apiUrl = "https://api.moonshot.cn/v1/chat/completions"
 
-func SingleChat(quizz string) string {
+func SingleChat(quizz string, answerType *string) string {
 	jsonBody := map[string]interface{}{
 		"model": "moonshot-v1-8k",
 		"messages": []map[string]interface{}{
@@ -66,14 +66,18 @@ func SingleChat(quizz string) string {
 		}
 		var kimiResp models.KimiResponse
 		json.Unmarshal(bodyBytes, &kimiResp)
-		if len(kimiResp.Choices) > 1 {
-			var answers strings.Builder
-			for index, chioce := range kimiResp.Choices {
-				answers.WriteString(fmt.Sprintf("回答%d: \n", index) + chioce.Message.Content + "\n")
-			}
-			return answers.String()
+		if *answerType == "complete" {
+			return string(bodyBytes)
 		} else {
-			return kimiResp.Choices[0].Message.Content
+			if len(kimiResp.Choices) > 1 {
+				var answers strings.Builder
+				for index, chioce := range kimiResp.Choices {
+					answers.WriteString(fmt.Sprintf("回答%d: \n", index) + chioce.Message.Content + "\n")
+				}
+				return answers.String()
+			} else {
+				return kimiResp.Choices[0].Message.Content
+			}
 		}
 	} else {
 		bodyBytes, err := io.ReadAll(resp.Body)
@@ -89,7 +93,8 @@ func SingleChat(quizz string) string {
 
 func Chat(c *gin.Context) {
 	quizz := c.PostForm("quizz")
+	answerType := c.PostForm("answerType")
 
-	result := SingleChat(quizz)
+	result := SingleChat(quizz, &answerType)
 	c.JSON(http.StatusOK, models.NewSuccessResponse(result))
 }
