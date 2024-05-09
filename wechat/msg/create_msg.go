@@ -38,10 +38,9 @@ func CreateReplyMsg(c *gin.Context) string {
 
 	var replyContent string
 
-	quizz := strings.ReplaceAll(content, fmt.Sprintf("@%s", msgSource.From.Payload.Name), "")
 	if isMentioned == "1" {
-		if quizz != "" {
-			result := kimi.SingleChat(quizz)
+		if content != "" {
+			result := kimi.SingleChat(content)
 			replyContent = fmt.Sprintf("@%s %s", msgSource.From.Payload.Name, result)
 		} else {
 			replyContent = fmt.Sprintf("@%s 叫我干啥？", msgSource.From.Payload.Name)
