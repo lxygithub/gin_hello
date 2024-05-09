@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"gin_hello/models"
-	"gin_hello/wechat/msg"
+	// "gin_hello/wechat/msg"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -112,7 +112,7 @@ func Received_wechat_msg(c *gin.Context) {
 		"success": true,
 		"data": map[string]interface{}{
 			"type":    "text",
-			"content": msg.CreateReplyMsg(c),
+			"content": "hhhhhhhhhhhhhh",
 		},
 	}
 
