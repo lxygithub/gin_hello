@@ -39,10 +39,10 @@ func CreateReplyMsg(c *gin.Context) string {
 	var replyContent string
 
 	quizz := RemoveAt(content)
-	if isMentioned == "1" {
+	if isMentioned == "1" || msgSource.To.Payload.Name != "" {
 		if quizz != "" {
 			result := openai.SingleChat(quizz)
-			replyContent = fmt.Sprintf("@%s %s", msgSource.From.Payload.Name, result)
+			replyContent = fmt.Sprintf("@%s\n %s", msgSource.From.Payload.Name, result)
 		} else {
 			replyContent = fmt.Sprintf("@%s 叫我干啥？", msgSource.From.Payload.Name)
 		}
@@ -50,13 +50,13 @@ func CreateReplyMsg(c *gin.Context) string {
 	return replyContent
 }
 
-func RemoveAt(content string) string{
+func RemoveAt(content string) string {
 
-     // 编译正则表达式来匹配 "@" 及其后的所有字符直到空格
-	 re := regexp.MustCompile(`@[\p{L}\p{N}\p{P}\p{Z}]* `)
+	// 编译正则表达式来匹配 "@" 及其后的所有字符直到空格
+	re := regexp.MustCompile(`@[\p{L}\p{N}\p{P}\p{Z}]* `)
 
-	 // 使用正则表达式替换匹配的部分为空字符串
-	 cleanedContent := re.ReplaceAllString(content, "")
+	// 使用正则表达式替换匹配的部分为空字符串
+	cleanedContent := re.ReplaceAllString(content, "")
 
-    return cleanedContent
+	return cleanedContent
 }
