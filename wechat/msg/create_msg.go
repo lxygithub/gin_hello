@@ -53,7 +53,7 @@ func CreateReplyMsg(c *gin.Context) string {
 func RemoveAt(content string) string{
 
      // 编译正则表达式来匹配 "@" 及其后的所有字符直到空格
-	 re := regexp.MustCompile(`@\S+\s*`)
+	 re := regexp.MustCompile(`@[\p{L}\p{N}\p{P}\p{Z}]* `)
 
 	 // 使用正则表达式替换匹配的部分为空字符串
 	 cleanedContent := re.ReplaceAllString(content, "")
