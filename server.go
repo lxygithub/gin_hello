@@ -5,6 +5,7 @@ import (
 	"gin_hello/kimi"
 	"gin_hello/middle_ware"
 	"gin_hello/models"
+	"gin_hello/openai"
 	"gin_hello/wechat"
 	"net/http"
 
@@ -40,6 +41,9 @@ func GinServer() *gin.Engine {
 	})
 	ginServer.POST("/kimi/single_chat", func(c *gin.Context) {
 		kimi.Chat(c)
+	})
+	ginServer.POST("/chatgpt/single_chat", func(c *gin.Context) {
+		openai.Chat(c)
 	})
 
 	ginServer.GET("/users", func(c *gin.Context) {
