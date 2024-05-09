@@ -14,7 +14,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var ApiUrl = "https://api.ohmygpt.com/v1/chat/completions"
+var ApiUrl = "https://cfcus02.opapi.win/v1/chat/completions"
 
 func SingleChat(quizz string) string {
 	jsonBody := map[string]interface{}{
