@@ -6,6 +6,8 @@ server:
 
 kimi:
   api_key: sk-lroRidFIwN6BXvPt5UWtPp0rROQZ3VmHRllNpQstflmaOE9G
+chatgpt:
+  api_key: sk-G4WnMON9A763B1a849b5T3BLbkFJd77b4941E0b64b068C15
 database:
   host: 117.50.199.110
   port: 6603

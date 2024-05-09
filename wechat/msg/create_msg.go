@@ -3,8 +3,8 @@ package msg
 import (
 	"encoding/json"
 	"fmt"
-	"gin_hello/kimi"
 	"gin_hello/models"
+	"gin_hello/openai"
 	"regexp"
 
 	"github.com/gin-gonic/gin"
@@ -41,7 +41,7 @@ func CreateReplyMsg(c *gin.Context) string {
 	quizz := RemoveAt(content)
 	if isMentioned == "1" {
 		if quizz != "" {
-			result := kimi.SingleChat(quizz)
+			result := openai.SingleChat(quizz)
 			replyContent = fmt.Sprintf("@%s %s", msgSource.From.Payload.Name, result)
 		} else {
 			replyContent = fmt.Sprintf("@%s 叫我干啥？", msgSource.From.Payload.Name)
