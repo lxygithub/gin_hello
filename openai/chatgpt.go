@@ -16,7 +16,7 @@ import (
 
 var ApiUrl = "https://cfcus02.opapi.win/v1/chat/completions"
 
-func SingleChat(quizz string) string {
+func SingleChat(quizz string, answerType *string) string {
 	jsonBody := map[string]interface{}{
 		"model": "gpt-3.5-turbo",
 		"messages": []map[string]interface{}{
@@ -65,15 +65,18 @@ func SingleChat(quizz string) string {
 		}
 		var chatgptResp models.ChatgptResp
 		json.Unmarshal(bodyBytes, &chatgptResp)
-
-		if len(chatgptResp.Choices) > 1 {
-			var answers strings.Builder
-			for index, chioce := range chatgptResp.Choices {
-				answers.WriteString(fmt.Sprintf("回答%d: \n", index) + chioce.Message.Content + "\n")
-			}
-			return answers.String()
+		if answerType != nil && *answerType == "complete" {
+			return string(bodyBytes)
 		} else {
-			return chatgptResp.Choices[0].Message.Content
+			if len(chatgptResp.Choices) > 1 {
+				var answers strings.Builder
+				for index, chioce := range chatgptResp.Choices {
+					answers.WriteString(fmt.Sprintf("回答%d: \n", index) + chioce.Message.Content + "\n")
+				}
+				return answers.String()
+			} else {
+				return chatgptResp.Choices[0].Message.Content
+			}
 		}
 	} else {
 		bodyBytes, err := io.ReadAll(resp.Body)
@@ -89,6 +92,7 @@ func SingleChat(quizz string) string {
 
 func Chat(c *gin.Context) {
 	quizz := c.PostForm("quizz")
-	result := SingleChat(quizz)
+	answerType := c.PostForm("answerType")
+	result := SingleChat(quizz, &answerType)
 	c.JSON(http.StatusOK, models.NewSuccessResponse(result))
 }

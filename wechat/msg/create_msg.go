@@ -41,16 +41,18 @@ func CreateReplyMsg(c *gin.Context) string {
 
 	
 	if msgSource.To.Payload.Name != "" {
-		replyContent = openai.SingleChat(content)
+		replyContent = openai.SingleChat(content, nil)
 	} else if msgSource.Room.ID != "" && isMentioned == "1" {
 		quizz := RemoveAt(content)
 		if quizz != "" {
-			result := openai.SingleChat(quizz)
+			result := openai.SingleChat(quizz, nil)
 			replyContent = fmt.Sprintf("@%s\n %s", msgSource.From.Payload.Name, result)
 		} else {
 			var what = []string{"?", "？", "??", "？？", "搞咩？", "干嘛"}
 			replyContent = what[rand.Intn(len(what))]
 		}
+	}else {
+		replyContent = content
 	}
 	return replyContent
 }
