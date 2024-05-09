@@ -66,11 +66,15 @@ func SingleChat(quizz string) string {
 		}
 		var kimiResp models.KimiResponse
 		json.Unmarshal(bodyBytes, &kimiResp)
-		var answers strings.Builder
-		for index, chioce := range kimiResp.Choices {
-			answers.WriteString(fmt.Sprintf("回答%d: \n", index) + chioce.Message.Content + "\n")
+		if len(kimiResp.Choices) > 1 {
+			var answers strings.Builder
+			for index, chioce := range kimiResp.Choices {
+				answers.WriteString(fmt.Sprintf("回答%d: \n", index) + chioce.Message.Content + "\n")
+			}
+			return answers.String()
+		} else {
+			return kimiResp.Choices[0].Message.Content
 		}
-		return answers.String()
 	} else {
 		bodyBytes, err := io.ReadAll(resp.Body)
 		if err != nil {
