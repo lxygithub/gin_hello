@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"gin_hello/models"
 	"gin_hello/openai"
+	"math/rand"
 	"regexp"
 
 	"github.com/gin-gonic/gin"
@@ -38,15 +39,17 @@ func CreateReplyMsg(c *gin.Context) string {
 
 	var replyContent string
 
-	quizz := RemoveAt(content)
-	if msgSource.To.Payload.Name != "" && quizz != "" {
-		replyContent = openai.SingleChat(quizz,nil)
-	} else if isMentioned == "1" {
+	
+	if msgSource.To.Payload.Name != "" {
+		replyContent = openai.SingleChat(content, nil)
+	} else if msgSource.Room.ID != "" && isMentioned == "1" {
+		quizz := RemoveAt(content)
 		if quizz != "" {
-			result := openai.SingleChat(quizz,nil)
+			result := openai.SingleChat(quizz, nil)
 			replyContent = fmt.Sprintf("@%s\n %s", msgSource.From.Payload.Name, result)
 		} else {
-			replyContent = fmt.Sprintf("@%s 叫我干啥？", msgSource.From.Payload.Name)
+			var what = []string{"?", "？", "??", "？？", "搞咩？", "干嘛"}
+			replyContent = what[rand.Intn(len(what))]
 		}
 	}
 	return replyContent

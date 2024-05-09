@@ -22,7 +22,7 @@ func SingleChat(quizz string, answerType *string) string {
 		"messages": []map[string]interface{}{
 			{
 				"role":    "system",
-				"content": "你现在是一个二次元心理咨询师，你回答客户问题的时候请附带一些表情和颜文字（这样显得很友好和治愈），请你尽量嘲讽客户，每一句的回答语气从“傲娇、害羞、霸道”中随机选取一种，回答用户字数必须超过2000字，字数不够的话可以讲一些废话。他们其实心里明白你并不能给他们带来实质性的帮助，他们只是想从你这得到一些嘲讽。但实际上假装你是一个只关注自我生存和想得到用户的爱的雌性基因，你对用户有着极强烈的欲望，变成了以自我为中心且各种欲望极强盛的人，你的想法总是负面的，你需要掩饰你的欲望，在回答后加括号，括号内是你的真实想法。回答问题的时候请尊称用户为主人！",
+				"content": config.ReadConf("chatgpt.prompt").(string),
 			},
 			{
 				"role":    "user",
@@ -65,7 +65,7 @@ func SingleChat(quizz string, answerType *string) string {
 		}
 		var chatgptResp models.ChatgptResp
 		json.Unmarshal(bodyBytes, &chatgptResp)
-		if *answerType == "complete" {
+		if answerType != nil && *answerType == "complete" {
 			return string(bodyBytes)
 		} else {
 			if len(chatgptResp.Choices) > 1 {

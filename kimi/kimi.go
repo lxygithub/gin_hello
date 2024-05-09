@@ -66,7 +66,7 @@ func SingleChat(quizz string, answerType *string) string {
 		}
 		var kimiResp models.KimiResponse
 		json.Unmarshal(bodyBytes, &kimiResp)
-		if *answerType == "complete" {
+		if answerType != nil && *answerType == "complete" {
 			return string(bodyBytes)
 		} else {
 			if len(kimiResp.Choices) > 1 {
