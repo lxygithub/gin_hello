@@ -8,14 +8,15 @@ import (
 	"gin_hello/models"
 	"io"
 	"net/http"
+	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
 
 var apiUrl = "https://api.moonshot.cn/v1/chat/completions"
 
-
-func SingleChat(quizz string) (string){
+func SingleChat(quizz string) string {
 	jsonBody := map[string]interface{}{
 		"model": "moonshot-v1-32k",
 		"messages": []map[string]interface{}{
@@ -48,6 +49,7 @@ func SingleChat(quizz string) (string){
 	// 初始化HTTP客户端
 	client := &http.Client{}
 
+	client.Timeout = 30 * time.Second
 	// 发送请求
 	resp, err := client.Do(req)
 	if err != nil {
@@ -55,20 +57,34 @@ func SingleChat(quizz string) (string){
 	}
 	defer resp.Body.Close()
 
-	// 处理响应，例如打印状态码或读取响应体
-	bodyBytes, err := io.ReadAll(resp.Body)
-	if err != nil {
-		panic(err)
-	}
-	var kimiResp models.KimiResponse
-	json.Unmarshal(bodyBytes, &kimiResp)
+	if resp.StatusCode == 200 {
 
-	return kimiResp.Choices[0].Message.Content
+		// 处理响应，例如打印状态码或读取响应体
+		bodyBytes, err := io.ReadAll(resp.Body)
+		if err != nil {
+			panic(err)
+		}
+		var kimiResp models.KimiResponse
+		json.Unmarshal(bodyBytes, &kimiResp)
+		var answers strings.Builder
+		for index, chioce := range kimiResp.Choices {
+			answers.WriteString(fmt.Sprintf("回答%d: \n", index) + chioce.Message.Content + "\n")
+		}
+		return answers.String()
+	} else {
+		bodyBytes, err := io.ReadAll(resp.Body)
+		if err != nil {
+			panic(err)
+		}
+		var kimiErr models.KimiErrResp
+		json.Unmarshal(bodyBytes, &kimiErr)
+
+		return kimiErr.Error.Message
+	}
 }
 
 func Chat(c *gin.Context) {
 	quizz := c.PostForm("quizz")
-
 
 	result := SingleChat(quizz)
 	c.JSON(http.StatusOK, models.NewSuccessResponse(result))

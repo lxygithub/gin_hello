@@ -80,3 +80,11 @@ type KimiResponse struct {
 		TotalTokens      int `json:"total_tokens"`
 	} `json:"usage"`
 }
+
+
+type KimiErrResp struct {
+	Error struct {
+		Message string `json:"message"`
+		Type    string `json:"type"`
+	} `json:"error"`
+}

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"gin_hello/kimi"
 	"gin_hello/models"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -30,18 +31,23 @@ func CreateReplyMsg(c *gin.Context) string {
 
 	content := c.PostForm("content")
 	source := c.PostForm("source")
-	// isMentioned := c.PostForm("isMentioned")
+	isMentioned := c.PostForm("isMentioned")
 	var msgSource models.MsgSource
 
 	json.Unmarshal([]byte(source), &msgSource)
 
 	var replyContent string
-	// quizz:=strings.ReplaceAll(fmt.Sprintf("@%s",msgSource.From.Payload.Name),content,"")
-	if content != "" {
-		result := kimi.SingleChat(content)
-		replyContent = fmt.Sprintf("@%s %s", msgSource.From.Payload.Name, result)
-	} else {
-		replyContent = fmt.Sprintf("@%s 叫我干啥？", msgSource.From.Payload.Name)
+
+	quizz := strings.ReplaceAll(fmt.Sprintf("@%s", msgSource.From.Payload.Name), content, "")
+	if isMentioned == "1" {
+		if quizz != "" {
+			result := kimi.SingleChat(quizz)
+			replyContent = fmt.Sprintf("@%s %s", msgSource.From.Payload.Name, result)
+		} else {
+			replyContent = fmt.Sprintf("@%s 叫我干啥？", msgSource.From.Payload.Name)
+		}
+	}else {
+		replyContent = content
 	}
 	return replyContent
 }
