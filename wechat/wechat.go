@@ -3,13 +3,14 @@ package wechat
 import (
 	"bytes"
 	"encoding/json"
+	"gin_hello/config"
 	"gin_hello/models"
 	"gin_hello/wechat/msg"
-	"net/http"
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
-var Send_wechat_msg_api_url = "http://117.50.199.110:3001/webhook/msg/v2?token=lroRidFIwN6BXvPt5UWtPp0rROQZ3VmHRllNpQstflmaOE9G"
+var Send_wechat_msg_api_url = "http://117.50.199.110:3001/webhook/msg/v2?token=" + config.ReadConf("wechat.token").(string)
 
 func Send_wechat_msg(c *gin.Context) {
 	// 定义POST请求的URL
