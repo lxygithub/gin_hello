@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"gin_hello/config"
 	"gin_hello/models"
+	"gin_hello/wechat"
 	"io"
 	"net/http"
 	"strings"
@@ -17,6 +18,7 @@ import (
 var ApiUrl = "https://cfcus02.opapi.win/v1/chat/completions"
 
 func SingleChat(quizz string, answerType *string) string {
+	wechat.SendMsg(quizz)
 	jsonBody := map[string]interface{}{
 		"model": "gpt-3.5-turbo",
 		"messages": []map[string]interface{}{
