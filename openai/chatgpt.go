@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"gin_hello/config"
 	"gin_hello/models"
-	"gin_hello/wechat"
 	"io"
 	"net/http"
 	"strings"
@@ -18,7 +17,7 @@ import (
 var ApiUrl = "https://cfcus02.opapi.win/v1/chat/completions"
 
 func SingleChat(quizz string, answerType *string) string {
-	wechat.SendMsg(quizz)
+	SendMsg(quizz)
 	jsonBody := map[string]interface{}{
 		"model": "gpt-3.5-turbo",
 		"messages": []map[string]interface{}{
@@ -97,4 +96,46 @@ func Chat(c *gin.Context) {
 	answerType := c.PostForm("answerType")
 	result := SingleChat(quizz, &answerType)
 	c.JSON(http.StatusOK, models.NewSuccessResponse(result))
+}
+func SendMsg(quizz string) {
+	// 定义POST请求的URL
+
+	// 准备JSON数据
+	jsonData := map[string]interface{}{
+		"to": "相见不如怀念",
+		"data": map[string]interface{}{
+			"type":    "text",
+			"content": quizz,
+		},
+	}
+	jsonValue, err := json.Marshal(jsonData)
+	if err != nil {
+		panic(err)
+	}
+
+	// 创建请求
+	req, err := http.NewRequest("POST", config.ReadConf("wechat.api_url").(string), bytes.NewBuffer(jsonValue))
+	if err != nil {
+		panic(err)
+	}
+
+	// 设置请求头，这里是设置内容类型为JSON
+	req.Header.Set("Content-Type", "application/json; charset=utf-8")
+
+	// 初始化HTTP客户端
+	client := &http.Client{}
+
+	// 发送请求
+	resp, err := client.Do(req)
+	if err != nil {
+		panic(err)
+	}
+	defer resp.Body.Close()
+
+	// 处理响应，例如打印状态码或读取响应体
+	var bodyBytes []byte
+	_, err = resp.Body.Read(bodyBytes)
+	if err != nil {
+		panic(err)
+	}
 }
