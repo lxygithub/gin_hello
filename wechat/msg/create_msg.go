@@ -3,10 +3,12 @@ package msg
 import (
 	"encoding/json"
 	"fmt"
+	"gin_hello/kimi"
 	"gin_hello/models"
 	"gin_hello/openai"
 	"math/rand"
 	"regexp"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -32,26 +34,36 @@ func CreateReplyMsg(c *gin.Context) string {
 
 	content := c.PostForm("content")
 	source := c.PostForm("source")
-	isMentioned := c.PostForm("isMentioned")
+	//isMentioned := c.PostForm("isMentioned")
 	var msgSource models.MsgSource
 
 	json.Unmarshal([]byte(source), &msgSource)
 
 	var replyContent string
 
-	
 	if msgSource.To.Payload.Name != "" {
-		replyContent = openai.SingleChat(content, nil)
-	} else if msgSource.Room.ID != "" && isMentioned == "1" {
-		quizz := RemoveAt(content)
+		if strings.Contains(content, "kimi") {
+
+			replyContent = kimi.SingleChat(content, nil)
+		} else {
+			replyContent = openai.SingleChat(content, nil)
+
+		}
+	} else if msgSource.Room.ID != "" && strings.HasPrefix(content, "#") {
+		quizz := strings.Replace(content, "#", "", 1)
+		var result string
 		if quizz != "" {
-			result := openai.SingleChat(quizz, nil)
+			if strings.Contains(content, "kimi") {
+				result = kimi.SingleChat(quizz, nil)
+			} else {
+				result = openai.SingleChat(quizz, nil)
+			}
 			replyContent = fmt.Sprintf("@%s\n %s", msgSource.From.Payload.Name, result)
 		} else {
 			var what = []string{"?", "？", "??", "？？", "搞咩？", "干嘛"}
 			replyContent = what[rand.Intn(len(what))]
 		}
-	}else {
+	} else {
 		replyContent = content
 	}
 	return replyContent
