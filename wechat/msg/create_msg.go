@@ -42,8 +42,7 @@ func CreateReplyMsg(c *gin.Context) string {
 	var replyContent string
 
 	if msgSource.To.Payload.Name != "" {
-		if strings.Contains(content, "kimi") {
-
+		if strings.HasPrefix(content, "kimi") {
 			replyContent = kimi.SingleChat(content, nil)
 		} else {
 			replyContent = openai.SingleChat(content, nil)
@@ -53,7 +52,7 @@ func CreateReplyMsg(c *gin.Context) string {
 		quizz := strings.Replace(content, "#", "", 1)
 		var result string
 		if quizz != "" {
-			if strings.Contains(content, "kimi") {
+			if strings.HasPrefix(quizz, "kimi") {
 				result = kimi.SingleChat(quizz, nil)
 			} else {
 				result = openai.SingleChat(quizz, nil)
