@@ -6,9 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="3cafc717-a0dc-4e25-b7b3-633e28217334" name="Changes" comment="修改唤醒方式">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/server.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wechat/msg/create_msg.go" beforeDir="false" afterPath="$PROJECT_DIR$/wechat/msg/create_msg.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wechat/wechat.go" beforeDir="false" afterPath="$PROJECT_DIR$/wechat/wechat.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
