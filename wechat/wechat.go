@@ -11,7 +11,7 @@ import (
 	"strings"
 )
 
-func Send_wechat_msg(c *gin.Context) {
+func SendWechatMsg(c *gin.Context) {
 	// 定义POST请求的URL
 
 	// 准备JSON数据
@@ -58,7 +58,7 @@ func Send_wechat_msg(c *gin.Context) {
 
 	c.JSON(resp.StatusCode, models.NewSuccessResponse(string(bodyBytes)))
 }
-func Send_wechat_msg2(c *gin.Context) {
+func SendWechatMsg2(c *gin.Context) {
 	// 定义POST请求的URL
 
 	// 准备JSON数据
@@ -106,7 +106,7 @@ func Send_wechat_msg2(c *gin.Context) {
 	c.JSON(resp.StatusCode, models.NewSuccessResponse(string(bodyBytes)))
 }
 
-func Received_wechat_msg(c *gin.Context) {
+func ReceivedWechatMsg(c *gin.Context) {
 	content := c.PostForm("content")
 	if !strings.HasPrefix(content, "#") {
 		return

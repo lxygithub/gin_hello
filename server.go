@@ -31,13 +31,13 @@ func GinServer() *gin.Engine {
 		c.JSON(http.StatusOK, models.NewSuccessResponse(data))
 	})
 	ginServer.POST("/send_wechat_msg/:to/:send_type/:msg", func(c *gin.Context) {
-		wechat.Send_wechat_msg(c)
+		wechat.SendWechatMsg(c)
 	})
 	ginServer.POST("/send_wechat_msg2", func(c *gin.Context) {
-		wechat.Send_wechat_msg2(c)
+		wechat.SendWechatMsg2(c)
 	})
 	ginServer.POST("/received_wechat_msg", func(c *gin.Context) {
-		wechat.Received_wechat_msg(c)
+		wechat.ReceivedWechatMsg(c)
 	})
 	ginServer.POST("/kimi/single_chat", func(c *gin.Context) {
 		kimi.Chat(c)
