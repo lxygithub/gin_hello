@@ -41,12 +41,11 @@ func CreateReplyMsg(c *gin.Context) string {
 
 	var replyContent string
 
-	if msgSource.To.Payload.Name != "" {
+	if msgSource.To.ID != "" {
 		if strings.HasPrefix(content, "kimi") {
-			replyContent = kimi.SingleChat(content, nil)
+			replyContent = kimi.SingleChat(strings.Replace(content, "kimi", "", 1), nil)
 		} else {
 			replyContent = openai.SingleChat(content, nil)
-
 		}
 	} else if msgSource.Room.ID != "" && strings.HasPrefix(content, "#") {
 		quizz := strings.Replace(content, "#", "", 1)

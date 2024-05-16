@@ -8,6 +8,7 @@ import (
 	"gin_hello/wechat/msg"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strings"
 )
 
 func Send_wechat_msg(c *gin.Context) {
@@ -106,6 +107,10 @@ func Send_wechat_msg2(c *gin.Context) {
 }
 
 func Received_wechat_msg(c *gin.Context) {
+	content := c.PostForm("content")
+	if !strings.HasPrefix(content, "#") {
+		return
+	}
 	respData := map[string]interface{}{
 		"success": true,
 		"data": map[string]interface{}{
