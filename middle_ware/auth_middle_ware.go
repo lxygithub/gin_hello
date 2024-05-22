@@ -12,12 +12,12 @@ import (
 func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// 从请求中获取token，通常是从Authorization头部或请求参数中获取
-		tokenString := c.GetHeader("Authorization")
+		tokenString := c.GetHeader("auth_token")
 
 		// 解析和验证token
 		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 			// 提供用于验证签名的密钥
-			return []byte(os.Getenv(config.ReadConf("jwt_secret_key").(string))), nil
+			return []byte(os.Getenv(config.ReadConf("server.jwt_secret_key").(string))), nil
 		})
 
 		// 如果token无效或解析时出错，则拒绝访问
