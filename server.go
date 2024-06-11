@@ -48,15 +48,15 @@ func GinServer() *gin.Engine {
 
 		c.JSON(http.StatusOK, models.NewSuccessResponse(
 			map[string]interface{}{
-				"configUrl":            config.ReadConf("configUrl").(string),
-				"endpoint":             config.ReadConf("endpoint").(string),
-				"region":               config.ReadConf("region").(string),
-				"accessKey":            config.ReadConf("accessKey").(string),
-				"secretKey":            config.ReadConf("secretKey").(string),
-				"bucketName":           config.ReadConf("bucketName").(string),
-				"maxConcurrentTaskNum": config.ReadConf("maxConcurrentTaskNum").(int),
-				"audioSliceSize":       config.ReadConf("audioSliceSize").(int),
-				"skipSilence":          config.ReadConf("skipSilence").(bool),
+				"configUrl":            config.ReadConf("recording.configUrl").(string),
+				"endpoint":             config.ReadConf("recording.endpoint").(string),
+				"region":               config.ReadConf("recording.region").(string),
+				"accessKey":            config.ReadConf("recording.accessKey").(string),
+				"secretKey":            config.ReadConf("recording.secretKey").(string),
+				"bucketName":           config.ReadConf("recording.bucketName").(string),
+				"maxConcurrentTaskNum": config.ReadConf("recording.maxConcurrentTaskNum").(int),
+				"audioSliceSize":       config.ReadConf("recording.audioSliceSize").(int),
+				"skipSilence":          config.ReadConf("recording.skipSilence").(bool),
 			},
 		))
 	})
