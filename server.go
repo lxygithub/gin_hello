@@ -15,7 +15,7 @@ import (
 func GinServer() *gin.Engine {
 	ginServer := gin.Default()
 	ginServer.Use(middle_ware.ErrorHandlingMiddleware())
-	//ginServer.Use(middle_ware.AuthMiddleware())
+	ginServer.Use(middle_ware.AuthMiddleware())
 	ginServer.GET("/", func(c *gin.Context) {
 		c.JSON(http.StatusOK, models.NewSuccessResponse(
 			map[string]interface{}{
@@ -40,10 +40,35 @@ func GinServer() *gin.Engine {
 	})
 
 	ginServer.GET("/users", func(c *gin.Context) {
-		users, _ := database.GetUsers()
+		database.GetUsers(c)
+
+	})
+	/**
+	data class RecordingServiceConfig(
+	    val configUrl: String = "http://117.50.199.110:8081/recording-service-config",
+	    val endpoint: String = "tos-cn-beijing.volces.com",
+	    val region: String = "cn-beijing",
+	    val accessKey: String = "AKLTODNlZTc0N2M4MGMxNGU2ODlmZDRlYTFkYjVlZWIwYTU",
+	    val secretKey: String = "T0dOaU5EUTVNV1JqWlRBeE5EbGpOR0U0TkdVelpqSTFZalprT1RSbE5qRQ==",
+	    val bucketName: String = "ark-auto-created-required-2101485836-cn-beijing",
+	    val maxConcurrentTaskNum: Int = 3,
+	    val audioSliceSize: Int = 10 * 1024 * 1024,
+	    val skipSilence: Boolean = false,
+	)
+	*/
+	ginServer.GET("/recording-service-config", func(c *gin.Context) {
+
 		c.JSON(http.StatusOK, models.NewSuccessResponse(
 			map[string]interface{}{
-				"users": users,
+				"configUrl":            "http://117.50.199.110:8081/recording-service-config",
+				"endpoint":             "tos-cn-beijing.volces.com",
+				"region":               "cn-beijing",
+				"accessKey":            "AKLTODNlZTc0N2M4MGMxNGU2ODlmZDRlYTFkYjVlZWIwYTU",
+				"secretKey":            "T0dOaU5EUTVNV1JqWlRBeE5EbGpOR0U0TkdVelpqSTFZalprT1RSbE5qRQ==",
+				"bucketName":           "ark-auto-created-required-2101485836-cn-beijing",
+				"maxConcurrentTaskNum": 3,
+				"audioSliceSize":       10 * 1024 * 1024,
+				"skipSilence":          "false",
 			},
 		))
 	})
@@ -51,7 +76,10 @@ func GinServer() *gin.Engine {
 		c.Redirect(http.StatusMovedPermanently, "/")
 	})
 
-	ginServer.POST("/Login", func(c *gin.Context) {
+	ginServer.POST("/register", func(c *gin.Context) {
+		auth.Register(c)
+	})
+	ginServer.POST("/login", func(c *gin.Context) {
 		auth.Login(c)
 	})
 	return ginServer

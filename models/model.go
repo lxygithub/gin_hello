@@ -1,5 +1,7 @@
 package models
 
+import "github.com/golang-jwt/jwt/v4"
+
 type MsgSource struct {
 	Room struct {
 		Events struct {
@@ -113,4 +115,11 @@ type ChatgptResp struct {
 // User 结构体定义用户数据的类型
 type User struct {
 	Username string
+	Nickname string
+	Uuid     string
+}
+
+type CustomClaims struct {
+	UUID int `json:"uuid"`
+	jwt.MapClaims
 }
