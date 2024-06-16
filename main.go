@@ -17,6 +17,6 @@ func main() {
 	)
 	log.Println(mysql)
 	database.InitDB(mysql)
-	_ = GinServer().Run(fmt.Sprintf(":%d", config.ReadConf("server.port").(int)))
+	_ = GinServer().RunTLS(fmt.Sprintf(":%d", config.ReadConf("server.port").(int)), "/etc/ssl/certs/cloudflare-origin.crt", "/etc/ssl/private/cloudflare-origin.key")
 
 }
