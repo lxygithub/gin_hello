@@ -3,15 +3,15 @@ package wechat
 import (
 	"bytes"
 	"encoding/json"
+	"gin_hello/config"
 	"gin_hello/models"
 	"gin_hello/wechat/msg"
-	"net/http"
 	"github.com/gin-gonic/gin"
+	"net/http"
+	"strings"
 )
 
-var Send_wechat_msg_api_url = "http://117.50.199.110:3001/webhook/msg/v2?token=lroRidFIwN6BXvPt5UWtPp0rROQZ3VmHRllNpQstflmaOE9G"
-
-func Send_wechat_msg(c *gin.Context) {
+func SendWechatMsg(c *gin.Context) {
 	// 定义POST请求的URL
 
 	// 准备JSON数据
@@ -31,7 +31,7 @@ func Send_wechat_msg(c *gin.Context) {
 	}
 
 	// 创建请求
-	req, err := http.NewRequest("POST", Send_wechat_msg_api_url, bytes.NewBuffer(jsonValue))
+	req, err := http.NewRequest("POST", config.ReadConf("wechat.api_url").(string), bytes.NewBuffer(jsonValue))
 	if err != nil {
 		panic(err)
 	}
@@ -58,7 +58,7 @@ func Send_wechat_msg(c *gin.Context) {
 
 	c.JSON(resp.StatusCode, models.NewSuccessResponse(string(bodyBytes)))
 }
-func Send_wechat_msg2(c *gin.Context) {
+func SendWechatMsg2(c *gin.Context) {
 	// 定义POST请求的URL
 
 	// 准备JSON数据
@@ -78,7 +78,7 @@ func Send_wechat_msg2(c *gin.Context) {
 	}
 
 	// 创建请求
-	req, err := http.NewRequest("POST", Send_wechat_msg_api_url, bytes.NewBuffer(jsonValue))
+	req, err := http.NewRequest("POST", config.ReadConf("wechat.api_url").(string), bytes.NewBuffer(jsonValue))
 	if err != nil {
 		panic(err)
 	}
@@ -106,7 +106,11 @@ func Send_wechat_msg2(c *gin.Context) {
 	c.JSON(resp.StatusCode, models.NewSuccessResponse(string(bodyBytes)))
 }
 
-func Received_wechat_msg(c *gin.Context) {
+func ReceivedWechatMsg(c *gin.Context) {
+	content := c.PostForm("content")
+	if !strings.HasPrefix(content, "#") {
+		return
+	}
 	respData := map[string]interface{}{
 		"success": true,
 		"data": map[string]interface{}{

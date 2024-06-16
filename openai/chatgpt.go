@@ -18,7 +18,7 @@ var ApiUrl = "https://cfcus02.opapi.win/v1/chat/completions"
 
 func SingleChat(quizz string, answerType *string) string {
 	jsonBody := map[string]interface{}{
-		"model": "gpt-3.5-turbo",
+		"model": "gpt-4o",
 		"messages": []map[string]interface{}{
 			{
 				"role":    "system",

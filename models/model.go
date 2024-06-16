@@ -1,4 +1,7 @@
 package models
+
+import "github.com/golang-jwt/jwt/v4"
+
 type MsgSource struct {
 	Room struct {
 		Events struct {
@@ -60,7 +63,6 @@ type MsgSource struct {
 	} `json:"from"`
 }
 
-
 type KimiResponse struct {
 	ID      string `json:"id"`
 	Object  string `json:"object"`
@@ -80,7 +82,6 @@ type KimiResponse struct {
 		TotalTokens      int `json:"total_tokens"`
 	} `json:"usage"`
 }
-
 
 type KimiErrResp struct {
 	Error struct {
@@ -109,4 +110,16 @@ type ChatgptResp struct {
 		CompletionTokens int `json:"completion_tokens"`
 		TotalTokens      int `json:"total_tokens"`
 	} `json:"usage"`
+}
+
+// User 结构体定义用户数据的类型
+type User struct {
+	Username string
+	Nickname string
+	Uuid     string
+}
+
+type CustomClaims struct {
+	UUID int `json:"uuid"`
+	jwt.MapClaims
 }

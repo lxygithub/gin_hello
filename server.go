@@ -1,20 +1,22 @@
 package main
 
 import (
+	"gin_hello/auth"
+	"gin_hello/config"
 	"gin_hello/database"
 	"gin_hello/kimi"
 	"gin_hello/middle_ware"
 	"gin_hello/models"
 	"gin_hello/openai"
 	"gin_hello/wechat"
-	"net/http"
-
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 func GinServer() *gin.Engine {
 	ginServer := gin.Default()
 	ginServer.Use(middle_ware.ErrorHandlingMiddleware())
+	ginServer.Use(middle_ware.AuthMiddleware())
 	ginServer.GET("/", func(c *gin.Context) {
 		c.JSON(http.StatusOK, models.NewSuccessResponse(
 			map[string]interface{}{
@@ -22,22 +24,14 @@ func GinServer() *gin.Engine {
 			},
 		))
 	})
-
-	ginServer.GET("/user/:username/:password", func(c *gin.Context) {
-		data := map[string]interface{}{
-			"username": c.Param("username"),
-			"password": c.Param("password"),
-		}
-		c.JSON(http.StatusOK, models.NewSuccessResponse(data))
-	})
 	ginServer.POST("/send_wechat_msg/:to/:send_type/:msg", func(c *gin.Context) {
-		wechat.Send_wechat_msg(c)
+		wechat.SendWechatMsg(c)
 	})
 	ginServer.POST("/send_wechat_msg2", func(c *gin.Context) {
-		wechat.Send_wechat_msg2(c)
+		wechat.SendWechatMsg2(c)
 	})
 	ginServer.POST("/received_wechat_msg", func(c *gin.Context) {
-		wechat.Received_wechat_msg(c)
+		wechat.ReceivedWechatMsg(c)
 	})
 	ginServer.POST("/kimi/single_chat", func(c *gin.Context) {
 		kimi.Chat(c)
@@ -47,10 +41,22 @@ func GinServer() *gin.Engine {
 	})
 
 	ginServer.GET("/users", func(c *gin.Context) {
-		users, _ := database.GetUsers()
+		database.GetUsers(c)
+
+	})
+	ginServer.GET("/recording-service-config", func(c *gin.Context) {
+
 		c.JSON(http.StatusOK, models.NewSuccessResponse(
 			map[string]interface{}{
-				"users": users,
+				"configUrl":            config.ReadConf("recording.configUrl").(string),
+				"endpoint":             config.ReadConf("recording.endpoint").(string),
+				"region":               config.ReadConf("recording.region").(string),
+				"accessKey":            config.ReadConf("recording.accessKey").(string),
+				"secretKey":            config.ReadConf("recording.secretKey").(string),
+				"bucketName":           config.ReadConf("recording.bucketName").(string),
+				"maxConcurrentTaskNum": config.ReadConf("recording.maxConcurrentTaskNum").(int),
+				"audioSliceSize":       config.ReadConf("recording.audioSliceSize").(int),
+				"skipSilence":          config.ReadConf("recording.skipSilence").(bool),
 			},
 		))
 	})
@@ -58,36 +64,11 @@ func GinServer() *gin.Engine {
 		c.Redirect(http.StatusMovedPermanently, "/")
 	})
 
+	ginServer.POST("/register", func(c *gin.Context) {
+		auth.Register(c)
+	})
 	ginServer.POST("/login", func(c *gin.Context) {
-		login(c)
+		auth.Login(c)
 	})
 	return ginServer
-}
-
-func login(c *gin.Context) {
-	// 创建接收用户登录信息的结构体
-	var loginInfo struct {
-		Username string `json:"username"`
-		Password string `json:"password"`
-	}
-
-	// 将请求体绑定到结构体
-	if err := c.ShouldBindJSON(&loginInfo); err != nil {
-		c.JSON(http.StatusBadRequest, models.NewErrorResponse(http.StatusBadRequest, "Invalid login parameters"))
-		return
-	}
-
-	// 这里应该通过查询数据库等方法验证用户名和密码的正确性
-	if loginInfo.Username != "admin" || loginInfo.Password != "admin" {
-		c.JSON(http.StatusUnauthorized, models.NewErrorResponse(http.StatusBadRequest, "Authentication failed"))
-		return
-	}
-
-	// 生成JWT令牌，这里只是示例代码，实际应用中应使用安全的方式生成和签名token
-	token := "some.jwt.token"
-	// 返回令牌
-	c.JSON(http.StatusOK, models.NewSuccessResponse(
-		map[string]interface{}{
-			"token": token,
-		}))
 }
