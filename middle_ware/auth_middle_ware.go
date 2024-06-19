@@ -10,6 +10,7 @@ import (
 )
 
 var noAuth = []string{
+	"/",
 	"/login",
 	"/register",
 	"/recording-service-config",
