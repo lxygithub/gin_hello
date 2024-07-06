@@ -60,7 +60,7 @@ func GinServer() *gin.Engine {
 				"audioSliceSize":       config.ReadConf("recording.audioSliceSize").(int),
 				"skipSilence":          config.ReadConf("recording.skipSilence").(bool),
 				"latestVersion":        config.ReadConf("recording.latestVersion").(int),
-				"apkDownloadUrl":       "https://117.50.199.110:8081/uploads/latest.apk",
+				"apkDownloadUrl":       "https://117.50.199.110:8081/download/latest.apk",
 			},
 		))
 	})
