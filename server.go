@@ -11,6 +11,8 @@ import (
 	"gin_hello/wechat"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"os"
+	"path/filepath"
 )
 
 func GinServer() *gin.Engine {
@@ -58,10 +60,32 @@ func GinServer() *gin.Engine {
 				"audioSliceSize":       config.ReadConf("recording.audioSliceSize").(int),
 				"skipSilence":          config.ReadConf("recording.skipSilence").(bool),
 				"latestVersion":        config.ReadConf("recording.latestVersion").(int),
-				"apkDownloadUrl":       config.ReadConf("recording.apkDownloadUrl").(string),
+				"apkDownloadUrl":       "https://117.50.199.110:8081/uploads/latest.apk",
 			},
 		))
 	})
+
+	// 定义文件下载接口
+	ginServer.GET("/download/:filename", func(c *gin.Context) {
+		filename := c.Param("filename")
+		filePath := filepath.Join("uploads", filename) // 假设文件存放在uploads目录下
+
+		// 检查文件是否存在
+		if _, err := os.Stat(filePath); os.IsNotExist(err) {
+			c.JSON(http.StatusNotFound, gin.H{"error": "File not found"})
+			return
+		}
+
+		// 设置响应头，告诉浏览器这是一个文件下载
+		c.Header("Content-Description", "File Transfer")
+		c.Header("Content-Transfer-Encoding", "binary")
+		c.Header("Content-Disposition", "attachment; filename="+filename)
+		c.Header("Content-Type", "application/octet-stream")
+
+		// 发送文件
+		c.File(filePath)
+	})
+
 	ginServer.NoRoute(func(c *gin.Context) {
 		c.Redirect(http.StatusMovedPermanently, "/")
 	})
