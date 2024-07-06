@@ -18,7 +18,7 @@ import (
 func GinServer() *gin.Engine {
 	ginServer := gin.Default()
 	ginServer.Use(middle_ware.ErrorHandlingMiddleware())
-	ginServer.Use(middle_ware.AuthMiddleware())
+	//ginServer.Use(middle_ware.AuthMiddleware())
 	ginServer.GET("/", func(c *gin.Context) {
 		c.JSON(http.StatusOK, models.NewSuccessResponse(
 			map[string]interface{}{
@@ -84,6 +84,36 @@ func GinServer() *gin.Engine {
 
 		// 发送文件
 		c.File(filePath)
+	})
+
+	// 为 multipart forms 设置更低的内存限制 (默认是 32 MiB)
+	ginServer.MaxMultipartMemory = 8 << 20 // 8 MiB
+
+	// 定义文件上传接口
+	ginServer.POST("/upload", func(c *gin.Context) {
+		// 获取上传的文件
+		file, err := c.FormFile("file")
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		// 构建文件保存路径
+		dst := filepath.Join("uploads", file.Filename)
+
+		// 保存文件到指定路径
+		if err := c.SaveUploadedFile(file, dst); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		// 返回成功响应
+		c.JSON(http.StatusOK, models.NewSuccessResponse(
+			map[string]interface{}{
+				"message":  "File uploaded successfully",
+				"filename": file.Filename,
+			},
+		))
 	})
 
 	ginServer.NoRoute(func(c *gin.Context) {
