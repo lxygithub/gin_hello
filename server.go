@@ -57,6 +57,8 @@ func GinServer() *gin.Engine {
 				"maxConcurrentTaskNum": config.ReadConf("recording.maxConcurrentTaskNum").(int),
 				"audioSliceSize":       config.ReadConf("recording.audioSliceSize").(int),
 				"skipSilence":          config.ReadConf("recording.skipSilence").(bool),
+				"latestVersion":        config.ReadConf("recording.latestVersion").(int),
+				"apkDownloadUrl":       config.ReadConf("recording.apkDownloadUrl").(string),
 			},
 		))
 	})
